@@ -63,7 +63,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Core\CustomCameraPlugin\CameraMoverPointer.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomCameraPlugin\CameraPlus.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomCameraPlugin\Config.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomCameraPlugin\ScreenCameraBehaviour.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomCameraPlugin\SteamVRCompatibility.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomChromaPlugin\ChromaEvent.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomChromaPlugin\ColourManager.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomFloorPlugin\PlatformLoader.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomFloorPlugin\PlatformManager.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomMenu\CustomMenuLoader.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomMenu\CustomMenuManager.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomNotePlugin\NoteLoader.cs" />
+    <Compile Include="Assets\Scripts\Core\CustomNotePlugin\NoteManager.cs" />
     <Compile Include="Assets\Scripts\Core\EngineStart.cs" />
+    <Compile Include="Assets\Scripts\Core\Handlers\AudioHandler.cs" />
+    <Compile Include="Assets\Scripts\Core\Handlers\Network\Codes.cs" />
+    <Compile Include="Assets\Scripts\Core\Handlers\Network\Network.cs" />
+    <Compile Include="Assets\Scripts\Core\Handlers\Network\Packets\PacketIn.cs" />
+    <Compile Include="Assets\Scripts\Core\Handlers\Network\Packets\PacketWriter.cs" />
+    <Compile Include="Assets\Scripts\Core\Handlers\SettingsHanler.cs" />
+    <Compile Include="Assets\Scripts\Core\Settings.cs" />
+    <Compile Include="Assets\Scripts\Core\SongReader\ChartFile.cs" />
+    <Compile Include="Assets\Scripts\Core\SongReader\DatFile.cs" />
     <Compile Include="Assets\Scripts\Helpers\HelperClass.cs" />
     <Compile Include="Assets\Scripts\Helpers\PostProcessing\Runtime\Attributes\GetSetAttribute.cs" />
     <Compile Include="Assets\Scripts\Helpers\PostProcessing\Runtime\Attributes\MinAttribute.cs" />
@@ -212,6 +234,11 @@
     <Compile Include="Assets\Scripts\Helpers\SteamVR\Scripts\SteamVR_TrackedObject.cs" />
     <Compile Include="Assets\Scripts\Helpers\SteamVR\Scripts\SteamVR_UpdatePoses.cs" />
     <Compile Include="Assets\Scripts\Helpers\SteamVR\Scripts\SteamVR_Utils.cs" />
+    <Compile Include="Assets\Scripts\Menu\DiffSelect.cs" />
+    <Compile Include="Assets\Scripts\Menu\MenuSelect.cs" />
+    <Compile Include="Assets\Scripts\Menu\NoteSelect.cs" />
+    <Compile Include="Assets\Scripts\Menu\PlatSelect.cs" />
+    <Compile Include="Assets\Scripts\Menu\SongSelect.cs" />
     <Compile Include="Assets\Scripts\Menu\ViveMenu\ControllerEventSystem.cs" />
     <Compile Include="Assets\Scripts\Menu\ViveMenu\DragDrop.cs" />
     <Compile Include="Assets\Scripts\Menu\ViveMenu\IUILaserPointer.cs" />
@@ -494,8 +521,17 @@
     <Reference Include="UnityEngine.XRModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.17f1/Editor/Data/Managed/UnityEngine/UnityEngine.XRModule.dll</HintPath>
     </Reference>
+    <Reference Include="CustomMenus">
+      <HintPath>C:/Users/Mike/Desktop/CloneSaber/Clone Saber/Assets/Scripts/Core/CustomMenu/CustomMenus.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>C:/Users/Mike/Desktop/CloneSaber/Clone Saber/Assets/Scripts/Helpers/JsonDotNet/Assemblies/Standalone/Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="CustomFloorPlugin">
+      <HintPath>C:/Users/Mike/Desktop/CloneSaber/Clone Saber/Assets/Scripts/Core/CustomFloorPlugin/CustomFloorPlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="CustomNotes">
+      <HintPath>C:/Users/Mike/Desktop/CloneSaber/Clone Saber/Assets/Scripts/Core/CustomNotePlugin/CustomNotes.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.2.17f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
