@@ -212,73 +212,44 @@ public class CustomSaberManager : MonoBehaviour
         if (_LeftSaber != null)
         {
             _LeftSaber.transform.SetParent(currentSaber.transform);
-            setLeftSaber();
+            setSaber(_LeftSaber, EngineStart.Instance.LeftController, NoteType.LEFT);
         }
 
         if (_RightSaber != null)
         {
             _RightSaber.transform.SetParent(currentSaber.transform);
-            setRightSaber();
+            setSaber(_RightSaber, EngineStart.Instance.RightController, NoteType.RIGHT);
         }
     }
 
-    public void setLeftSaber()
+    public void setSaber(GameObject _Saber, GameObject _Controller, NoteType type)
     {
-        if (EngineStart.Instance.LeftController.GetComponent<FixedJoint>())
-            if (EngineStart.Instance.LeftController.GetComponent<FixedJoint>().connectedBody != null)
-                EngineStart.Instance.LeftController.GetComponent<FixedJoint>().connectedBody = null;
+        if (_Controller.GetComponent<FixedJoint>())
+            if (_Controller.GetComponent<FixedJoint>().connectedBody != null)
+                _Controller.GetComponent<FixedJoint>().connectedBody = null;
 
-        _LeftSaber.transform.rotation = EngineStart.Instance.LeftController.transform.rotation;
-        _LeftSaber.transform.position = EngineStart.Instance.LeftController.transform.position;
+        _Saber.transform.rotation = _Controller.transform.rotation;
+        _Saber.transform.position = _Controller.transform.position;
 
-        var jointL = AddFixedJoint(EngineStart.Instance.LeftController);
+        var jointL = AddFixedJoint(_Controller);
 
-        Rigidbody _leftRid = _LeftSaber.GetComponent<Rigidbody>();
+        Rigidbody _Rid = _Saber.GetComponent<Rigidbody>();
 
-        if (_leftRid == null)
-            _leftRid = _LeftSaber.AddComponent<Rigidbody>();
+        if (_Rid == null)
+            _Rid = _Saber.AddComponent<Rigidbody>();
 
-        _leftRid.useGravity = false;
+        _Rid.useGravity = false;
 
-        jointL.connectedBody = _leftRid;
+        jointL.connectedBody = _Rid;
 
-        SaberHandler _leftSaberScript = _LeftSaber.GetComponent<SaberHandler>();
+        SaberHandler _SaberScript = _Saber.GetComponent<SaberHandler>();
 
-        if(_leftSaberScript == null)
-            _leftSaberScript = _LeftSaber.AddComponent<SaberHandler>();
+        if(_SaberScript == null)
+            _SaberScript = _Saber.AddComponent<SaberHandler>();
 
-        _leftSaberScript._type = NoteType.LEFT;
+        _SaberScript._type = type;
     }
-
-    public void setRightSaber()
-    {
-        if (EngineStart.Instance.RightController.GetComponent<FixedJoint>())
-            if (EngineStart.Instance.RightController.GetComponent<FixedJoint>().connectedBody != null)
-                EngineStart.Instance.RightController.GetComponent<FixedJoint>().connectedBody = null;
-
-        _RightSaber.transform.rotation = EngineStart.Instance.RightController.transform.rotation;
-        _RightSaber.transform.position = EngineStart.Instance.RightController.transform.position;
-
-        var jointR = AddFixedJoint(EngineStart.Instance.RightController);
-
-        Rigidbody _rightRid = _RightSaber.GetComponent<Rigidbody>();
-
-        if(_rightRid == null)
-            _rightRid = _RightSaber.AddComponent<Rigidbody>();
-
-        _rightRid.useGravity = false;
-
-
-        jointR.connectedBody = _rightRid;
-
-        SaberHandler _RightSaberScript = _RightSaber.GetComponent<SaberHandler>();
-
-        if (_RightSaberScript == null)
-            _RightSaberScript = _RightSaber.AddComponent<SaberHandler>();
-
-        _RightSaberScript._type = NoteType.RIGHT;
-    }
-
+    
     private FixedJoint AddFixedJoint(GameObject obj)
     {
         FixedJoint fx = obj.AddComponent<FixedJoint>();

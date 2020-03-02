@@ -11,16 +11,15 @@ public class SaberHandler : MonoBehaviour
     public NoteType _type;
     public SteamVR_Controller.Device device;
     public SteamVR_TrackedObject controllerInHand;
-    public GameObject cutPlane;
-    public GameObject cutter;
-    public GameObject target;
     GameObject _tip;
     GameObject _base;
+    GameObject _Controller;
     private void Start()
     {
         _tip = GetChildByName(gameObject, "Tip");
         _base = GetChildByName(gameObject, "Base");
-        controllerInHand = _type == NoteType.LEFT ? EngineStart.Instance.LeftController.GetComponentInChildren<SteamVR_TrackedObject>(true) : EngineStart.Instance.RightController.GetComponentInChildren<SteamVR_TrackedObject>(true);
+        _Controller = _type == NoteType.LEFT ? EngineStart.Instance.LeftController : EngineStart.Instance.RightController;
+        controllerInHand = _Controller.GetComponentInChildren<SteamVR_TrackedObject>(true);
     }
 
     private Vector3 previousPos;
@@ -32,6 +31,15 @@ public class SaberHandler : MonoBehaviour
             if ((int)controllerInHand.index != -1)
             {
                 device = SteamVR_Controller.Input((int)controllerInHand.index);
+            }
+        }
+        else
+        {
+            float ControllerDistance = Vector3.Distance(gameObject.transform.position, device.transform.pos);
+
+            if (ControllerDistance > 0.2f)
+            {
+                CustomSaberManager.Instance.setSaber(gameObject, _Controller, _type);
             }
         }
 
