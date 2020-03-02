@@ -1,8 +1,9 @@
 # ModEngineVR
 ModEngineVR is a VR engine in which it reads and utilizes common mods for the game BeatSaber.
 
-* Supported Mods
-              * Camera Plus
+* Supported Mods *
+
+* Camera Plus
               * Chroma Mod
               * Mapping Extensions
               * Customs Notes (required by Engine)
