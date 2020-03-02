@@ -1,60 +1,47 @@
 ﻿using System;
-using System.Collections;
+using CustomSaber;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using static HelperClass;
 using UnityEngine;
 
-public class PlatformLoader : MonoBehaviour
+public class CustomSaberLoader : MonoBehaviour
 {
-    private const string customFolder = "CustomPlatforms";
+    private const string customFolder = "CustomSabers";
 
     private List<string> bundlePaths;
-    private List<CustomFloorPlugin.CustomPlatform> platforms;
+    private List<SaberDescriptor> sabers;
 
     /// <summary>
     /// Loads AssetBundles and populates the platforms array with CustomPlatform objects
     /// </summary>
-    public CustomFloorPlugin.CustomPlatform[] CreateAllPlatforms(Transform parent)
+    public SaberDescriptor[] CreateAllSabers(Transform parent)
     {
         string customPlatformsFolderPath = Path.Combine(Application.dataPath, customFolder);
-        
+
         // Create the CustomPlatforms folder if it doesn't already exist
         if (!Directory.Exists(customPlatformsFolderPath))
         {
             Directory.CreateDirectory(customPlatformsFolderPath);
         }
 
-        // Find AssetBundles in our CustomPlatforms directory
-        string[] allBundlePaths = Directory.GetFiles(customPlatformsFolderPath, "*.plat");
+        // Find AssetBundles in our CustomSabers directory
+        string[] allBundlePaths = Directory.GetFiles(customPlatformsFolderPath, "*.saber");
 
-        platforms = new List<CustomFloorPlugin.CustomPlatform>();
+        sabers = new List<SaberDescriptor>();
         bundlePaths = new List<string>();
         
-        /*GameObject defaultPlatformGO = Instantiate(_DefaultPlatform);
-        CustomFloorPlugin.CustomPlatform defaultPlatform = defaultPlatformGO.GetComponent<CustomFloorPlugin.CustomPlatform>();
-
-        defaultPlatformGO.transform.parent = parent;
-        defaultPlatformGO.name = defaultPlatform.platName + " by " + defaultPlatform.platAuthor;
-
-        if (defaultPlatform.icon == null)
-            defaultPlatform.icon = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.name == "FeetIcon")
-                .FirstOrDefault();
-
-        defaultPlatformGO.SetActive(false);
-        platforms.Add(defaultPlatform);*/
-        
-        // Populate the platforms array
+        // Populate the array
         for (int i = 0; i < allBundlePaths.Length; i++)
         {
-            CustomFloorPlugin.CustomPlatform newPlatform = LoadPlatformBundle(allBundlePaths[i], parent);
+            LoadPlatformBundle(allBundlePaths[i], parent);
         }
 
-        return platforms.ToArray();
+        return sabers.ToArray();
     }
 
 
-    public CustomFloorPlugin.CustomPlatform LoadPlatformBundle(string bundlePath, Transform parent)
+    public SaberDescriptor LoadPlatformBundle(string bundlePath, Transform parent)
     {
         AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
         if (bundle == null)
@@ -62,56 +49,67 @@ public class PlatformLoader : MonoBehaviour
             return null;
         }
 
-        CustomFloorPlugin.CustomPlatform newPlatform = LoadPlatform(bundle, parent);
+        SaberDescriptor newPlatform = LoadSaber(bundle, parent);
         if (newPlatform != null)
         {
             bundlePaths.Add(bundlePath);
-            platforms.Add(newPlatform);
+            sabers.Add(newPlatform);
         }
 
         return newPlatform;
     }
 
-    /// <summary>
-    /// Instantiate a platform from an assetbundle.
-    /// </summary>
-    /// <param name="bundle">An AssetBundle containing a CustomPlatform</param>
-    /// <returns></returns>
-    private CustomFloorPlugin.CustomPlatform LoadPlatform(AssetBundle bundle, Transform parent)
+    private SaberDescriptor LoadSaber(AssetBundle bundle, Transform parent)
     {
-        GameObject platformPrefab = bundle.LoadAsset<GameObject>("_CustomPlatform");
+        GameObject platformPrefab = bundle.LoadAsset<GameObject>("_customsaber");
         if (platformPrefab == null)
         {
             return null;
         }
 
-        GameObject newPlatform = Instantiate(platformPrefab);
-        newPlatform.transform.parent = parent;
+        GameObject newSaber = Instantiate(platformPrefab);
+        newSaber.transform.parent = parent;
 
         bundle.Unload(false);
 
         // Collect author and name
-        CustomFloorPlugin.CustomPlatform customPlatform = newPlatform.GetComponent<CustomFloorPlugin.CustomPlatform>();
-        if (customPlatform == null)
+        SaberDescriptor customSaber = newSaber.GetComponent<SaberDescriptor>();
+        if (customSaber == null)
         {
-            // no customplatform component, abort
-            Destroy(newPlatform);
+            // no component, abort
+            Destroy(newSaber);
             return null;
         }
 
-        newPlatform.name = customPlatform.platName + " by " + customPlatform.platAuthor;
+        newSaber.name = customSaber.SaberName + " by " + customSaber.AuthorName;
 
-        //if (customPlatform.icon == null)
+        // if (customPlatform.icon == null)
         //customPlatform.icon = Resources.FindObjectsOfTypeAll<Sprite>().Where(x => x.name == "FeetIcon")
-        //.FirstOrDefault();
+        // .FirstOrDefault();
 
-        //AddManagers(newPlatform);
+        AddManagers(newSaber);
 
-        newPlatform.SetActive(false);
+        newSaber.SetActive(false);
+
+        foreach (Transform child in newSaber.transform)
+        {
+            if (child.name == "RightSaber" || child.name == "LeftSaber")
+            {
+                GameObject _Tip = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                _Tip.name = "Tip";
+                _Tip.transform.SetParent(child);
+                _Tip.transform.localScale = new Vector3(0, 0, 0);
+                _Tip.transform.localPosition = new Vector3(0, 0, child.localScale.z);
+                GameObject _base = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                _base.name = "Base";
+                _base.transform.SetParent(child);
+                _base.transform.localScale = new Vector3(0, 0, 0);
+                _base.transform.localPosition = new Vector3(0, 0, 0);
+            }
+        }
 
 
-        return customPlatform;
-
+       return customSaber;
     }
 
     private void AddManagers(GameObject go)
@@ -121,19 +119,32 @@ public class PlatformLoader : MonoBehaviour
 
     private void AddManagers(GameObject go, GameObject root)
     {
-        // Replace materials for this object
-        /* MaterialSwapper.ReplaceMaterialsForGameObject(go);
-
-       
-        // Add a tube light manager if there are tube light descriptors
-        if (go.GetComponentInChildren<TubeLight>(true) != null)
+        if (go.GetComponentInChildren<CustomTrail>(true) != null)
         {
-            TubeLightManager tlm = root.GetComponent<TubeLightManager>();
-            if(tlm == null) tlm = root.AddComponent<TubeLightManager>();
-            tlm.CreateTubeLights(go);
+            CustomTrail tlm;
+            foreach (Transform child in go.transform)
+            {
+                if (child.GetComponent<CustomTrail>())
+                {
+                    tlm = child.GetComponent<CustomTrail>();
+
+                    GameObject trail = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    trail.transform.SetParent(child);
+                    Destroy(trail.GetComponent<BoxCollider>());
+                    trail.transform.position = tlm.PointStart.position;
+                    trail.transform.localEulerAngles = new Vector3(90, 0, 0);
+                    TrailHandler newTrail = trail.AddComponent<TrailHandler>();                    
+                    newTrail.pointEnd = tlm.PointEnd.gameObject;
+                    newTrail.pointStart = tlm.PointStart.gameObject;
+                    newTrail.mat = tlm.TrailMaterial;
+                    newTrail.Onload();
+                }
+            }
+
+           // tlm.CreateTubeLights(go);
         }
         
-
+/* 
         // Rotation effect manager
         if (go.GetComponentInChildren<RingRotationData>(true) != null)
         {

@@ -26,6 +26,9 @@ public class PlatformManager : MonoBehaviour
 
     public void EnableDisableDefaults()
     {
+        if (!currentPlatform.gameObject.activeInHierarchy)
+            currentPlatform.gameObject.SetActive(true);
+
         GameObject _Dynamic = GetChildByName(Instance.GetPlatform(0).gameObject, "Dynamic");
 
         GetChildByName(_Dynamic, "RotatingLeftLazer").SetActive(Instance.currentPlatform.hideRotatingLasers ? false : true);
@@ -99,7 +102,9 @@ public class PlatformManager : MonoBehaviour
             _plat.transform.localScale = _currentMenuObjects._PlatListPreFab.transform.localScale;
             _plat.transform.localRotation = _currentMenuObjects._PlatListPreFab.transform.localRotation;
             _plat.name = platforms[i].platName;
-            _plat.GetComponentInChildren<Button>().onClick.AddListener(() => _plat.AddComponent<PlatSelect>().GoToTarget(i));
+            PlatSelect _newSelect = _plat.AddComponent<PlatSelect>();
+            _newSelect.index = i;
+            _plat.GetComponentInChildren<Button>().onClick.AddListener(() => _newSelect.GoToTarget());
             //_plat.platformIndex = i;
 
             Transform[] ts = _plat.transform.GetComponentsInChildren<Transform>(true);
@@ -117,8 +122,8 @@ public class PlatformManager : MonoBehaviour
 
                 if (t.gameObject.name == "Cover")
                 {
-                    Image tmp = t.gameObject.GetComponent<Image>();
-                    tmp.sprite = platforms[i].icon;
+                    //Image tmp = t.gameObject.GetComponent<Image>();
+                    //tmp.sprite = platforms[i].icon;
                 }
             }
 
@@ -136,18 +141,21 @@ public class PlatformManager : MonoBehaviour
             }
         }
 
+        if (_currentSettings.LastKnownPlatform != "")
+        {
+            for (int i = 0; i < platforms.Length; i++)
+            {
+                if (platforms[i].platName == _currentSettings.LastKnownPlatform)
+                {
+                    ChangeToPlatform(i);
+                    break;
+                }
+            }
+        }
         //if (platforms.Length > 0)
-            //ChangeToPlatform(platformIndex);
+        //ChangeToPlatform(platformIndex);
     }
     
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            NextPlatform();
-        }
-    }
-
     public int currentPlatformIndex
     {
         get { return platformIndex; }
@@ -167,31 +175,11 @@ public class PlatformManager : MonoBehaviour
     {
         return platforms.ElementAt(i);
     }
-
-    public void NextPlatform()
+    
+    public void ChangeToPlatform(int index)
     {
-        ChangeToPlatform(platformIndex + 1);
-    }
-
-    public void PrevPlatform()
-    {
-        ChangeToPlatform(platformIndex - 1);
-    }
-
-    public void ChangeToPlatform(int index, bool save = true)
-    {
-        // Hide current Platform
-        if(currentPlatform.platName != "Default")
-            currentPlatform.gameObject.SetActive(false);
-
-        // Increment index
+        currentPlatform.gameObject.SetActive(false);
         platformIndex = index % platforms.Length;
-
-        // Save path into ModPrefs
-        //if (save)
-        //Plugin.config.SetString("Data", "CustomPlatformPath", currentPlatform.platName + currentPlatform.platAuthor);
-
-        // Show new platform
         currentPlatform.gameObject.SetActive(true);
     }
 }

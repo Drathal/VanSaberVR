@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using static HelperClass;
 
-public class NoteSelect : MonoBehaviour
+public class SaberSelect : MonoBehaviour
 {
     public int index;
     public void GoToTarget()
     {
-        NoteManager.Instance.ChangeToNote(index);
-        _currentSettings.LastKnownNoteSet = NoteManager.Instance.currentNote.NoteName;
+        CustomSaberManager.Instance.ChangeToSaber(index);
+        _currentSettings.LastKnownSaberSet = CustomSaberManager.Instance.currentSaber.SaberName;
         SettingsHandler.Instance.WriteSettings(_currentSettings);
     }
 }

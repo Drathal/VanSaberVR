@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using static CustomFloorPlugin.TubeLight;
 
 public class JsonMapFile
 {
@@ -161,10 +162,15 @@ public class EventData
     public float Time { get; set; }
 
     [JsonProperty("_type")]
-    public int Type { get; set; }
+    public LightsID Type { get; set; }
 
     [JsonProperty("_value")]
     public int Value { get; set; }
+
+    public float TimeInSec()
+    {
+        return Time * GameHandler.Instance._BeatPerSec;
+    }
 }
 
 public class NoteData
@@ -174,6 +180,11 @@ public class NoteData
     public float _lineLayer { get; set; }
     public NoteType _type { get; set; }
     public CutDirection _cutDirection { get; set; }
+
+    public float TimeInSec()
+    {
+        return _time * GameHandler.Instance._BeatPerSec;
+    }
 }
 
 public class ObstacleData
@@ -183,6 +194,11 @@ public class ObstacleData
     public float _type { get; set; }
     public float _duration { get; set; }
     public float _width { get; set; }
+
+    public float TimeInSec()
+    {
+        return _time * GameHandler.Instance._BeatPerSec;
+    }
 }
 
 public class Chart

@@ -60,6 +60,7 @@ public class DifficultyBeatmap
     public string _beatmapFilename { get; set; }
     public float _noteJumpMovementSpeed { get; set; }
     public float _noteJumpStartBeatOffset { get; set; }
+    public CustomData _customData { get; set; }
     public DatLevelData level { get; set; }
 }
 
@@ -69,6 +70,47 @@ public class DifficultyBeatmapSets
     public List<DifficultyBeatmap> _difficultyBeatmaps { get; set; }
 }
 
+public class ColorMap
+{
+    [JsonProperty("b")]
+    public double B { get; set; }
+
+    [JsonProperty("g")]
+    public double G { get; set; }
+
+    [JsonProperty("r")]
+    public double R { get; set; }
+}
+
+public class CustomData
+{
+    [JsonProperty("_colorLeft")]
+    public ColorMap ColorLeft { get; set; }
+
+    [JsonProperty("_colorRight")]
+    public ColorMap ColorRight { get; set; }
+
+    [JsonProperty("_difficultyLevel")]
+    public string DifficultyLevel { get; set; }
+
+    [JsonProperty("_editorOffset")]
+    public long EditorOffset { get; set; }
+
+    [JsonProperty("_editorOldOffset")]
+    public long EditorOldOffset { get; set; }
+
+    [JsonProperty("_information")]
+    public IEnumerable<string> Information { get; set; }
+
+    [JsonProperty("_requirements")]
+    public IEnumerable<string> Requirements { get; set; }
+
+    [JsonProperty("_suggestions")]
+    public IEnumerable<string> Suggestions { get; set; }
+
+    [JsonProperty("_warnings")]
+    public IEnumerable<string> Warnings { get; set; }
+}
 
 public class Map
 {
@@ -133,6 +175,7 @@ public class Map
     public string _coverImageFilename { get; set; }
     [JsonProperty("_environmentName")]
     public string _environmentName { get; set; }
+    
     [JsonProperty("_difficultyBeatmapSets")]
     public List<DifficultyBeatmapSets> _difficultyBeatmapSets { get; set; }
 }

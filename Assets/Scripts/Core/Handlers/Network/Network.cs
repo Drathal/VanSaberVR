@@ -113,25 +113,57 @@ public class NetSocket
 
     void SettingRead(byte[] data)
     {
-        PacketIn packet = new PacketIn(data);
-        _currentSettings = new Settings()
+        try
         {
-            UserName = Decrypt(packet.ReadString()),
-            LeftColor = ColourFromInt(packet.ReadInt32()),
-            RightColor = ColourFromInt(packet.ReadInt32()),
-            WallFrameColor = ColourFromInt(packet.ReadInt32()),
-            LeftLightColor = ColourFromInt(packet.ReadInt32()),
-            RightLightColor = ColourFromInt(packet.ReadInt32()),
-            ShowDebris = packet.ReadInt32(),
-            ShowSparks = packet.ReadInt32(),
-            CutSoundLevel = packet.ReadInt32(),
-            ArmDistance = packet.ReadFloat(),
-            PlayerHeight = packet.ReadFloat(),
-            LastKnownMenu = Decrypt(packet.ReadString()),
-            LastKnownPlatform = Decrypt(packet.ReadString()),
-            LastKnownSaberSet = Decrypt(packet.ReadString()),
-            LastKnownNoteSet = Decrypt(packet.ReadString())
-        };
+            PacketIn packet = new PacketIn(data);
+            _currentSettings = new Settings()
+            {
+                UserName = Decrypt(packet.ReadString()),
+                LeftColor = ColourFromInt(packet.ReadInt32()),
+                RightColor = ColourFromInt(packet.ReadInt32()),
+                WallFrameColor = ColourFromInt(packet.ReadInt32()),
+                LeftLightColor = ColourFromInt(packet.ReadInt32()),
+                RightLightColor = ColourFromInt(packet.ReadInt32()),
+                ShowDebris = packet.ReadInt32(),
+                ShowSparks = packet.ReadInt32(),
+                CutSoundLevel = packet.ReadInt32(),
+                ArmDistance = packet.ReadFloat(),
+                PlayerHeight = packet.ReadFloat(),
+                LastKnownMenu = Decrypt(packet.ReadString()),
+                LastKnownPlatform = Decrypt(packet.ReadString()),
+                LastKnownSaberSet = Decrypt(packet.ReadString()),
+                LastKnownNoteSet = Decrypt(packet.ReadString())
+            };
+        }
+        catch (Exception)
+        {
+            if (File.Exists(@Application.dataPath + "/Data.mjd"))
+            {
+                File.Delete(@Application.dataPath + "/Data.mjd");
+            }
+
+            Settings newSettings = new Settings()
+            {
+                UserName = "CloneSaberTester",
+                LeftColor = Color.red,
+                RightColor = Color.blue,
+                WallFrameColor = Color.white,
+                LeftLightColor = Color.red,
+                RightLightColor = Color.blue,
+                ShowDebris = 1,
+                ShowSparks = 1,
+                CutSoundLevel = 30,
+                ArmDistance = 1.5f,
+                PlayerHeight = 1,
+                LastKnownMenu = "",
+                LastKnownPlatform = "",
+                LastKnownSaberSet = "",
+                LastKnownNoteSet = ""
+            };
+
+            SettingsHandler.Instance.WriteSettings(newSettings);
+            SettingsHandler.Instance.ReadSettings();
+        }
     }
     
     public byte[] EncodeOpcode(int size, int opcode)

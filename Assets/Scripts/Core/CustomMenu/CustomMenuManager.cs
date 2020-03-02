@@ -179,7 +179,12 @@ public class CustomMenuManager : MonoBehaviour
             _NoteContent = GetChildByName(_menu, "NoteContent"),
             _NoteListPreFab = GetChildByName(_menu, "NoteListPreFab"),
             _SaberContent = GetChildByName(_menu, "SaberContent"),
-            _SaberListPreFab = GetChildByName(_menu, "SaberListPreFab")
+            _SaberListPreFab = GetChildByName(_menu, "SaberListPreFab"),
+            _Combo = GetChildByName(_menu, "ComboValue"),
+            _Score = GetChildByName(_menu, "ScoreValue"),
+            _ScoreUI = GetChildByName(_menu, "ScoreUI"),
+            _TimeRemain = GetChildByName(_menu, "New Text")
+            //_Multiplier = GetChildByName(_menu, "")
         };
 
         _currentMenuObjects._MenusButton.GetComponent<Button>().onClick.AddListener(MenuSelectButton);
@@ -196,20 +201,20 @@ public class CustomMenuManager : MonoBehaviour
     public void SelectPlatButton()
     {
         _currentSettings.LastKnownPlatform = PlatformManager.Instance.currentPlatform.platName;
-        SettingsHanler.Instance.WriteSettings(_currentSettings);
+        SettingsHandler.Instance.WriteSettings(_currentSettings);
 
     }
 
     public void SelectNoteButton()
     {
         _currentSettings.LastKnownNoteSet = NoteManager.Instance.currentNote.NoteName;
-        SettingsHanler.Instance.WriteSettings(_currentSettings);
+        SettingsHandler.Instance.WriteSettings(_currentSettings);
     }
 
     public void SelectSaberButton()
     {
-        //_currentSettings.LastKnownSaberSet = Sa.Instance.currentNote.NoteName;
-        //SettingsHanler.Instance.WriteSettings(_currentSettings);
+        _currentSettings.LastKnownSaberSet = CustomSaberManager.Instance.currentSaber.SaberName;
+        SettingsHandler.Instance.WriteSettings(_currentSettings);
     }
     public void MenuSelectButton()
     {
@@ -223,7 +228,7 @@ public class CustomMenuManager : MonoBehaviour
 
     public void PlayButton()
     {
-
+        GameHandler.OnLoad();
     }
 
     public void UpdateDiffs()
@@ -253,11 +258,10 @@ public class CustomMenuManager : MonoBehaviour
                     if (t.gameObject.name == "difficulty")
                     {
                         t.gameObject.GetComponent<Text>().text = BeatmapSet._beatmapCharacteristicName + " " + Beatmap._difficulty;
+                        button.GetComponent<Button>().onClick.AddListener(() => button.AddComponent<DiffSelect>().GoToTarget(BeatmapSet, Beatmap));
+                        button.gameObject.SetActive(true);
                     }
                 }
-
-                button.GetComponentInChildren<Button>().onClick.AddListener(() => button.AddComponent<DiffSelect>().GoToTarget(BeatmapSet, Beatmap));
-                button.gameObject.SetActive(true);
             }
         }
     }
@@ -385,4 +389,10 @@ public class CustomMenuObjects
     //public GameObject _NoteCount;
     //public GameObject _WallCount;
     //public GameObject _BombCount;
+
+    public GameObject _Combo;
+    public GameObject _Score;
+    public GameObject _TimeRemain;
+    public GameObject _Multiplier;
+    public GameObject _ScoreUI;
 }

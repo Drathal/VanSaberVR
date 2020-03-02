@@ -18,15 +18,4 @@ public class Settings
     public string LastKnownPlatform = "Default";
     public string LastKnownSaberSet = "Default";
     public string LastKnownNoteSet = "Default";
-
-    public static void WriteSettings(Settings newSettings)
-    {
-        if (File.Exists(@Application.dataPath + "/data.mjd"))
-            File.Delete(@Application.dataPath + "/data.mjd");
-    }
-
-    public static void ReadSettings()
-    {
-        
-    }
 }

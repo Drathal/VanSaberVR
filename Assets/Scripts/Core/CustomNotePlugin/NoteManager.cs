@@ -80,8 +80,9 @@ public class NoteManager : MonoBehaviour
             _note.transform.localScale = _currentMenuObjects._NoteListPreFab.transform.localScale;
             _note.transform.localRotation = _currentMenuObjects._NoteListPreFab.transform.localRotation;
             _note.name = notes[i].NoteName;
-            _note.GetComponentInChildren<Button>().onClick.AddListener(() => _note.AddComponent<NoteSelect>().GoToTarget(i));
-            //_note.noteIndex = i;
+            NoteSelect _noteSelect = _note.AddComponent<NoteSelect>();
+            _noteSelect.index = i;
+            _note.GetComponentInChildren<Button>().onClick.AddListener(() => _noteSelect.GoToTarget());
 
             Transform[] ts = _note.transform.GetComponentsInChildren<Transform>(true);
             foreach (Transform t in ts)
@@ -116,17 +117,22 @@ public class NoteManager : MonoBehaviour
             }
         }
 
+        if (_currentSettings.LastKnownNoteSet != "")
+        {
+            for (int i = 0; i < notes.Length; i++)
+            {
+                if (notes[i].NoteName == _currentSettings.LastKnownNoteSet)
+                {
+                    ChangeToNote(i);
+                    break;
+                }
+            }
+        }
+
         //if (notes.Length > 0)
-            //ChangeToNote(noteIndex);
+        //ChangeToNote(noteIndex);
     }
     
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            NextNote();
-        }
-    }
 
     public int currentNoteIndex
     {
@@ -147,18 +153,8 @@ public class NoteManager : MonoBehaviour
     {
         return notes.ElementAt(i);
     }
-
-    public void NextNote()
-    {
-        ChangeToNote(noteIndex + 1);
-    }
-
-    public void PrevPlatform()
-    {
-        ChangeToNote(noteIndex - 1);
-    }
-
-    public void ChangeToNote(int index, bool save = true)
+    
+    public void ChangeToNote(int index)
     {
         currentNote.gameObject.SetActive(false);
         noteIndex = index % notes.Length;
@@ -167,8 +163,6 @@ public class NoteManager : MonoBehaviour
 
     public void LoadCurrentNotes()
     {
-        /*var _objectPooler = FindObjectsOfType<ObjectPooler>().FirstOrDefault();
-
         GameObject _Wall = GetChildByName(currentNote.gameObject, "Wall");
 
         if (_Wall == null)
@@ -213,42 +207,56 @@ public class NoteManager : MonoBehaviour
 
         if (_Wall != null)
         {
-            MovableObject _wallHandler = _Wall.GetComponent<MovableObject>();
+            MoveHandler _wallHandler = _Wall.GetComponent<MoveHandler>();
 
             if (_wallHandler == null)
             {
-                _wallHandler = _Wall.AddComponent<MovableObject>();
+                _wallHandler = _Wall.AddComponent<MoveHandler>();
             }
-            
-            _objectPooler.obstaclePrefab = _Wall;
-            _objectPooler.obstaclePrefab.SetActive(false);
+
+            Transform[] _Children = _Wall.transform.GetComponentsInChildren<Transform>(true);
+
+            for (int i = 0; i < _Children.Length; i++)
+            {
+                BoxCollider _wallCollider = _Children[i].gameObject.GetComponent<BoxCollider>();
+
+                if (_wallCollider == null)
+                {
+                    _wallCollider = _Children[i].gameObject.AddComponent<BoxCollider>();
+                }
+
+                _wallCollider.isTrigger = true;
+            }
+
+            PoolHandler.Instance.obstaclePrefab = _Wall;
+            PoolHandler.Instance.obstaclePrefab.SetActive(false);
         }
 
         BoxCollider _collider = null;
-        MovableObject _cubeHandler = null;
+        MoveHandler _cubeHandler = null;
 
         if (_NoteLeft != null)
         {
-            _collider = _NoteLeft.GetComponent<BoxCollider>();
+            _collider = _NoteLeft.transform.GetChild(0).gameObject.GetComponent<BoxCollider>();
 
             if (_collider == null)
             {
-                _collider = _NoteLeft.AddComponent<BoxCollider>();
+                _collider = _NoteLeft.transform.GetChild(0).gameObject.AddComponent<BoxCollider>();
             }
 
-            _cubeHandler = _NoteLeft.GetComponent<MovableObject>();
+            _cubeHandler = _NoteLeft.GetComponent<MoveHandler>();
 
             if (_cubeHandler == null)
             {
-                _cubeHandler = _NoteLeft.AddComponent<MovableObject>();
+                _cubeHandler = _NoteLeft.AddComponent<MoveHandler>();
             }
 
             _collider.size = new Vector3(1.384117f, 1.28684f, 2.170774f);
             _collider.center = new Vector3(-0.001176417f, -0.002926767f, -0.4800174f);
             _collider.isTrigger = true;
-            _objectPooler.NoteLeft = _NoteLeft;
-            _objectPooler.NoteLeft.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
-            _objectPooler.NoteLeft.SetActive(false);
+            PoolHandler.Instance.NoteLeft = _NoteLeft;
+            PoolHandler.Instance.NoteLeft.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
+            PoolHandler.Instance.NoteLeft.SetActive(false);
         }
 
         _collider = null;
@@ -256,26 +264,26 @@ public class NoteManager : MonoBehaviour
 
         if (_NoteRight != null)
         {
-            _collider = _NoteRight.GetComponent<BoxCollider>();
+            _collider = _NoteRight.transform.GetChild(0).gameObject.GetComponent<BoxCollider>();
 
             if (_collider == null)
             {
-                _collider = _NoteRight.AddComponent<BoxCollider>();
+                _collider = _NoteRight.transform.GetChild(0).gameObject.AddComponent<BoxCollider>();
             }
 
-            _cubeHandler = _NoteRight.GetComponent<MovableObject>();
+            _cubeHandler = _NoteRight.GetComponent<MoveHandler>();
 
             if (_cubeHandler == null)
             {
-                _cubeHandler = _NoteRight.AddComponent<MovableObject>();
+                _cubeHandler = _NoteRight.AddComponent<MoveHandler>();
             }
 
             _collider.size = new Vector3(1.384117f, 1.28684f, 2.170774f);
             _collider.center = new Vector3(-0.001176417f, -0.002926767f, -0.4800174f);
             _collider.isTrigger = true;
-            _objectPooler.NoteRight = _NoteRight;
-            _objectPooler.NoteRight.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
-            _objectPooler.NoteRight.SetActive(false);
+            PoolHandler.Instance.NoteRight = _NoteRight;
+            PoolHandler.Instance.NoteRight.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
+            PoolHandler.Instance.NoteRight.SetActive(false);
         }
 
         _collider = null;
@@ -283,26 +291,26 @@ public class NoteManager : MonoBehaviour
 
         if (_NoteDotLeft != null)
         {
-            _collider = _NoteDotLeft.GetComponent<BoxCollider>();
+            _collider = _NoteDotLeft.transform.GetChild(0).gameObject.GetComponent<BoxCollider>();
 
             if (_collider == null)
             {
-                _collider = _NoteDotLeft.AddComponent<BoxCollider>();
+                _collider = _NoteDotLeft.transform.GetChild(0).gameObject.AddComponent<BoxCollider>();
             }
 
-            _cubeHandler = _NoteDotLeft.GetComponent<MovableObject>();
+            _cubeHandler = _NoteDotLeft.GetComponent<MoveHandler>();
 
             if (_cubeHandler == null)
             {
-                _cubeHandler = _NoteDotLeft.AddComponent<MovableObject>();
+                _cubeHandler = _NoteDotLeft.AddComponent<MoveHandler>();
             }
 
             _collider.size = new Vector3(1.384117f, 1.28684f, 2.170774f);
             _collider.center = new Vector3(-0.001176417f, -0.002926767f, -0.4800174f);
             _collider.isTrigger = true;
-            _objectPooler.NoteDotLeft = _NoteDotLeft;
-            _objectPooler.NoteDotLeft.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
-            _objectPooler.NoteDotLeft.SetActive(false);
+            PoolHandler.Instance.NoteDotLeft = _NoteDotLeft;
+            PoolHandler.Instance.NoteDotLeft.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
+            PoolHandler.Instance.NoteDotLeft.SetActive(false);
         }
 
         _collider = null;
@@ -310,26 +318,26 @@ public class NoteManager : MonoBehaviour
 
         if (_NoteDotRight != null)
         {
-            _collider = _NoteDotRight.GetComponent<BoxCollider>();
+            _collider = _NoteDotRight.transform.GetChild(0).gameObject.GetComponent<BoxCollider>();
 
             if (_collider == null)
             {
-                _collider = _NoteDotRight.AddComponent<BoxCollider>();
+                _collider = _NoteDotRight.transform.GetChild(0).gameObject.AddComponent<BoxCollider>();
             }
 
-            _cubeHandler = _NoteDotRight.GetComponent<MovableObject>();
+            _cubeHandler = _NoteDotRight.GetComponent<MoveHandler>();
 
             if (_cubeHandler == null)
             {
-                _cubeHandler = _NoteDotRight.AddComponent<MovableObject>();
+                _cubeHandler = _NoteDotRight.AddComponent<MoveHandler>();
             }
 
             _collider.size = new Vector3(1.384117f, 1.28684f, 2.170774f);
             _collider.center = new Vector3(-0.001176417f, -0.002926767f, -0.4800174f);
             _collider.isTrigger = true;
-            _objectPooler.NoteDotRight = _NoteDotRight;
-            _objectPooler.NoteDotRight.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
-            _objectPooler.NoteDotRight.SetActive(false);
+            PoolHandler.Instance.NoteDotRight = _NoteDotRight;
+            PoolHandler.Instance.NoteDotRight.transform.localScale = new Vector3(0.45f, 0.45f, 0.45f);
+            PoolHandler.Instance.NoteDotRight.SetActive(false);
         }
 
         _collider = null;
@@ -337,28 +345,28 @@ public class NoteManager : MonoBehaviour
 
         if (_NoteBomb != null)
         {
-            SphereCollider _bombCollider = _NoteBomb.GetComponent<SphereCollider>();
+            SphereCollider _bombCollider = _NoteBomb.transform.GetChild(0).gameObject.GetComponent<SphereCollider>();
 
             if (_bombCollider == null)
             {
-                _bombCollider = _NoteBomb.AddComponent<SphereCollider>();
+                _bombCollider = _NoteBomb.transform.GetChild(0).gameObject.AddComponent<SphereCollider>();
             }
 
-            _cubeHandler = _NoteBomb.GetComponent<MovableObject>();
+            _cubeHandler = _NoteBomb.GetComponent<MoveHandler>();
 
             if (_cubeHandler == null)
             {
-                _cubeHandler = _NoteBomb.AddComponent<MovableObject>();
+                _cubeHandler = _NoteBomb.AddComponent<MoveHandler>();
             }
 
             _bombCollider.radius = 0.4f;
             _bombCollider.center = new Vector3(0, 0, 0);
             _bombCollider.isTrigger = true;
-            _objectPooler.NoteBomb = _NoteBomb;
-            _objectPooler.NoteBomb.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
-            _objectPooler.NoteBomb.SetActive(false);
+            PoolHandler.Instance.NoteBomb = _NoteBomb;
+            PoolHandler.Instance.NoteBomb.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+            PoolHandler.Instance.NoteBomb.SetActive(false);
         }
 
-        _objectPooler.SetPooledNotes();*/
+        PoolHandler.Instance.SetPools();
     }
 }
