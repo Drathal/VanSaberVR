@@ -1,14 +1,14 @@
 * Add Pause menu needs added to custom menu set and engine.
 * Add Platform event setup
 * Fix default note saber acting crazy
-* Fix saber re-attach if controller dies then repowers.
+* Fix saber re-attach if controller dies then repowers. ✓ (done)
 * Add Head collision for walls.
 * Add fading bars for 360 mode.
 * Add Fail
 * Add Particles on hit.
 * Add custom hit sounds
 * Add leaderboards?
-* Fix Scoreboard drop on new song.
+* Fix Scoreboard drop on new song. ✓ (done)
 * Fix Default menu for content scroll. (notes, sabers, platforms, songs)
 * Add flying score text for cuts
 * Add Settings to default menu and engine
